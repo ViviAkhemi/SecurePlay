@@ -1,255 +1,272 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz de Segurança Digital</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .quiz-container {
-      max-width: 600px;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-      font-weight: bold;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      padding: 10px;
-      border: 1px solid #ddd;
-      margin-bottom: 8px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-
-    li.correct {
-      background-color: #d4edda;
-      border-color: #28a745;
-      color: #155724;
-    }
-
-    li.wrong {
-      background-color: #f8d7da;
-      border-color: #dc3545;
-      color: #721c24;
-    }
-
-    .feedback {
-      margin-top: 20px;
-    }
-
-    button {
-      padding: 8px 16px;
-      background-color: #007bff;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      margin-top: 2rem;
-      padding: 1rem 0;
-      color: gray;
-      background-color: #f9f9f9;
-      border-top: 1px solid #ddd;
-}
-
-
-  </style>
-</head>
-<body>
-  <div class="quiz-container">
-    <div class="status-bar">
-      <p id="points">Pontos: ⭐ 0</p>
-      <p id="badges">Medalhas: Nenhuma</p>
-    </div>
-
-    <h2 id="question">Carregando...</h2>
-
-    <ul id="options"></ul>
-
-    <div class="feedback" id="feedback" style="display:none;">
-      <p id="feedback-msg"></p>
-      <button onclick="nextQuestion()">Próximo desafio</button>
-    </div>
-  </div>
-
-  <script>
-    const levels = [
-      [
-        {
-          question: "Qual é a senha mais forte?",
-          options: ["Ana2024", "123456", "@na_Segura!2025"],
-          answer: 2,
-        },
-        {
-          question: "O que acontece ao escolher uma senha fraca?",
-          options: ["nada muda", "você ganha pontos", "sua conta fica vulnerável"],
-          answer: 2,
-        },
-      ],
-      [
-        {
-          question: "Qual das opções representa melhor o que é um malware?",
-          options: [
-            "Um programa de segurança instalado pelo próprio usuário.",
-            "Um software malicioso criado para causar danos, roubar dados ou espionar.",
-            "Um sistema legítimo que atualiza automaticamente o antivírus.",
-          ],
-          answer: 1,
-        },
-        {
-          question: "Se você está desenvolvendo um sistema de cadastro de usuários, qual medida aumenta a segurança contra ataques de phishing?",
-          options: [
-            "Exigir autenticação multifator no login",
-            "Permitir login com senha simples para melhorar a experiência do usuário.",
-            "Enviar links de redefinição de senha sem expiração.",
-          ],
-          answer: 0,
-        },
-      ],
-      [
-        {
-          question: "Um tipo de malware projetado para registrar tudo o que o usuário digita no teclado é chamado de:",
-          options: ["Ramsomware", "Keylogger", "Worm"],
-          answer: 1,
-        },
-        {
-          question: "No desenvolvimento de uma API que exige autenticação, qual prática é mais segura contra abusos relacionados a phishing?",
-          options: [
-            "Usar tokens de acesso de curta duração com renovação segura.",
-            "Utilizar login apenas com senha para simplificar a experiência.",
-            "Armazenar tokens permanentemente no navegador do usuário.",
-          ],
-          answer: 0,
-        },
-      ],
-    ];
-
-    let currentLevel = 0;
-    let currentIndex = 0;
-    let selected = null;
-    let correctStreak = 0;
-    let points = 0;
-    let badges = [];
-
-    const questionEl = document.getElementById("question");
-    const optionsEl = document.getElementById("options");
-    const feedbackEl = document.getElementById("feedback");
-    const feedbackMsg = document.getElementById("feedback-msg");
-    const pointsEl = document.getElementById("points");
-    const badgesEl = document.getElementById("badges");
-
-    function loadQuestion() {
-      selected = null;
-      feedbackEl.style.display = "none";
-      const currentQuestion = levels[currentLevel][currentIndex];
-      questionEl.textContent = currentQuestion.question;
-      optionsEl.innerHTML = "";
-
-      currentQuestion.options.forEach((option, index) => {
-        const li = document.createElement("li");
-        li.textContent = option;
-        li.onclick = () => selectOption(index);
-        optionsEl.appendChild(li);
-      });
-    }
-
-    function selectOption(index) {
-      if (selected !== null) return;
-
-      selected = index;
-      const currentQuestion = levels[currentLevel][currentIndex];
-      const items = optionsEl.querySelectorAll("li");
-
-      if (index === currentQuestion.answer) {
-        items[index].classList.add("correct");
-        feedbackMsg.textContent = "Muito bem!!! Você ganhou 10 pontos. Vamos para o próximo desafio 🎉";
-        points += 10;
-        correctStreak++;
-      } else {
-        items[index].classList.add("wrong");
-        items[currentQuestion.answer].classList.add("correct");
-        feedbackMsg.textContent = "Boa tentativa, continue praticando!";
-        correctStreak = 0;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz de Segurança - MVP</title>
+    <style>
+      * {
+        box-sizing: border-box;
       }
 
-      feedbackEl.style.display = "block";
-      updateStatus();
-    }
-
-    function updateStatus() {
-      pointsEl.textContent = `Pontos: ⭐ ${points}`;
-      badgesEl.textContent = `Medalhas: ${badges.join(" | ") || "Nenhuma"}`;
-    }
-
-    function awardBadge(level) {
-      const badgeNames = ["🥉 Iniciante", "🥈 Intermediário", "🥇 Especialista"];
-      if (!badges.includes(badgeNames[level])) {
-        badges.push(badgeNames[level]);
-        alert(`🏅 Você ganhou a medalha: ${badgeNames[level]}!`);
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
       }
-    }
 
-    function nextQuestion() {
-      const level = levels[currentLevel];
+      .quiz-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+      }
 
-      if (currentIndex < level.length - 1) {
-        currentIndex++;
-      } else {
-        if (correctStreak === level.length) {
-          awardBadge(currentLevel);
-          if (currentLevel < levels.length - 1) {
-            alert("🎉 Você desbloqueou o próximo nível!");
-            currentLevel++;
-            currentIndex = 0;
-          } else {
-            alert("🏆 Parabéns! Você concluiu todos os níveis do quiz!");
-            return;
-          }
+      .quiz-container {
+        max-width: 500px;
+        width: 100%;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .status-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 8px;
+        cursor: pointer;
+        border-radius: 4px;
+        user-select: none;
+        transition: background-color 0.3s ease;
+      }
+
+      li.correct {
+        background-color: #d4edda;
+        border-color: #28a745;
+        color: #155724;
+      }
+
+      li.wrong {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+        color: #721c24;
+      }
+
+      .feedback {
+        margin-top: 20px;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 8px 16px;
+        margin-top: 10px;
+        background-color: #007bff;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.8rem;
+        margin: 1rem 0;
+        color: gray;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="quiz-wrapper">
+      <div class="quiz-container">
+        <div class="status-bar">
+          <p>Pontos: <span id="points">0</span></p>
+          <p>Medalhas: <span id="badges">Nenhuma</span></p>
+        </div>
+
+        <h2 id="question">Carregando pergunta...</h2>
+
+        <ul id="options"></ul>
+
+        <div id="feedback" class="feedback" style="display: none">
+          <p id="feedback-text"></p>
+          <button onclick="nextQuestion()">Próximo desafio</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 - Projeto MVP SecurePlay | Uso acadêmico. Todos os direitos reservados.
+    </footer>
+
+    <script>
+      const levels = [
+        [
+          {
+            question: "Qual é a senha mais forte?",
+            options: ["Ana2024", "123456", "@na_Segura!2025"],
+            answer: 2,
+          },
+          {
+            question: "O que acontece ao escolher uma senha fraca?",
+            options: ["nada muda", "você ganha pontos", "sua conta fica vulnerável"],
+            answer: 2,
+          },
+        ],
+        [
+          {
+            question: "Qual das opções representa melhor o que é um malware?",
+            options: [
+              "Um programa de segurança instalado pelo próprio usuário.",
+              "Um software malicioso criado para causar danos, roubar dados ou espionar.",
+              "Um sistema legítimo que atualiza automaticamente o antivírus.",
+            ],
+            answer: 1,
+          },
+          {
+            question:
+              "Se você está desenvolvendo um sistema de cadastro de usuários, qual medida aumenta a segurança contra ataques de phishing?",
+            options: [
+              "Exigir autenticação multifator no login",
+              "Permitir login com senha simples para melhorar a experiência do usuário.",
+              "Enviar links de redefinição de senha sem expiração.",
+            ],
+            answer: 0,
+          },
+        ],
+        [
+          {
+            question:
+              "Um tipo de malware projetado para registrar tudo o que o usuário digita no teclado é chamado de:",
+            options: ["Ramsomware", "Keylogger", "Worm"],
+            answer: 1,
+          },
+          {
+            question:
+              "No desenvolvimento de uma API que exige autenticação, qual prática é mais segura contra abusos relacionados a phishing?",
+            options: [
+              "Usar tokens de acesso de curta duração com renovação segura.",
+              "Utilizar login apenas com senha para simplificar a experiência.",
+              "Armazenar tokens permanentemente no navegador do usuário.",
+            ],
+            answer: 0,
+          },
+        ],
+      ];
+
+      let currentLevel = 0;
+      let currentIndex = 0;
+      let selected = null;
+      let correctStreak = 0;
+      let points = 0;
+      let badges = [];
+
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      const feedbackEl = document.getElementById("feedback");
+      const feedbackText = document.getElementById("feedback-text");
+      const pointsEl = document.getElementById("points");
+      const badgesEl = document.getElementById("badges");
+
+      function loadQuestion() {
+        const current = levels[currentLevel][currentIndex];
+        questionEl.textContent = current.question;
+        optionsEl.innerHTML = "";
+
+        current.options.forEach((option, index) => {
+          const li = document.createElement("li");
+          li.textContent = option;
+          li.addEventListener("click", () => selectOption(index, li));
+          optionsEl.appendChild(li);
+        });
+      }
+
+      function selectOption(index, li) {
+        if (selected !== null) return;
+        selected = index;
+
+        const correctIndex = levels[currentLevel][currentIndex].answer;
+        const options = optionsEl.querySelectorAll("li");
+
+        if (index === correctIndex) {
+          li.classList.add("correct");
+          feedbackText.innerHTML = "Muito bem!!! Você ganhou 10 pontos.<br>Vamos para o próximo desafio 🎉";
+          points += 10;
+          correctStreak++;
         } else {
-          alert("Você precisa acertar todas para desbloquear o próximo nível.");
+          li.classList.add("wrong");
+          options[correctIndex].classList.add("correct");
+          feedbackText.textContent = "Boa tentativa, continue praticando!";
+          correctStreak = 0;
         }
 
-        currentIndex = 0;
-        correctStreak = 0;
+        feedbackEl.style.display = "block";
+        pointsEl.textContent = points;
+        selected = index;
+      }
+
+      function nextQuestion() {
+        selected = null;
+        feedbackEl.style.display = "none";
+
+        if (currentIndex < levels[currentLevel].length - 1) {
+          currentIndex++;
+        } else {
+          if (correctStreak === levels[currentLevel].length) {
+            awardBadge(currentLevel);
+            if (currentLevel < levels.length - 1) {
+              alert("🎉 Você desbloqueou o próximo nível!");
+              currentLevel++;
+              currentIndex = 0;
+              correctStreak = 0;
+            } else {
+              alert("🏆 Parabéns! Você concluiu todos os níveis do quiz!");
+              return;
+            }
+          } else {
+            alert("Você precisa acertar todas para desbloquear o próximo nível.");
+            currentIndex = 0;
+            correctStreak = 0;
+          }
+        }
+
+        loadQuestion();
+      }
+
+      function awardBadge(level) {
+        const badgeNames = ["🥉 Iniciante", "🥈 Intermediário", "🥇 Especialista"];
+        if (!badges.includes(badgeNames[level])) {
+          badges.push(badgeNames[level]);
+          alert(`🏅 Você ganhou a medalha: ${badgeNames[level]}!`);
+          badgesEl.textContent = badges.join(" | ");
+        }
       }
 
       loadQuestion();
-    }
-
-    // Inicializar
-    loadQuestion();
-  </script>
-  <footer style="text-align: center; font-size: 0.8rem; margin-top: 2rem; color: gray;">
-  © 2025 - Projeto acadêmico (MVP) para TCC. Uso comercial não autorizado.
-  </footer>
-</body>
+    </script>
+  </body>
 </html>
